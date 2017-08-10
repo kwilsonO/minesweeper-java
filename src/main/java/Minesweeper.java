@@ -7,11 +7,47 @@ public class Minesweeper {
 
     public static void main(String args[]){
 
-        boolean[][] game = buildBoard();
-        printBoard(game);
+        boolean[][] revealed;
+        boolean[][] bombs = buildBoard();
+        //printBoard(bombs);
+        revealed = new boolean[dimensionM + 2][dimensionN + 2];
 
-        int[][] gameCounts = generateGameValues(game);
-        printBoardWithValues(game, gameCounts);
+        int[][] gameCounts = generateGameValues(bombs);
+        printBoardWithValues(bombs, gameCounts, revealed);
+
+        playGame(bombs, gameCounts, revealed);
+
+    }
+
+    public static void playGame(boolean[][] bombs, int[][] gameCounts, boolean[][] revealed){
+
+        Scanner input = new Scanner(System.in);
+        int gameState = 0;
+        while(gameState == 0){
+
+            System.out.print("Enter square to reveal(m n): ");
+            int m = input.nextInt();
+            int n = input.nextInt();
+            System.out.println();
+
+            revealed[m][n] = true;
+            if(bombs[m][n]){
+                gameState = -1;
+                printBoardWithValues(bombs, gameCounts, revealed);
+                continue;
+            } else {
+                //logic to check if winning step
+            }
+
+            printBoardWithValues(bombs, gameCounts, revealed);
+        }
+
+        if(gameState == -1){
+            System.out.println("SORRY YOU LOST!");
+        } else {
+            System.out.println("YOU WON!");
+        }
+
 
     }
 
@@ -86,12 +122,16 @@ public class Minesweeper {
         }
     }
 
-    public static void printBoardWithValues(boolean[][] bombs, int[][] bombCounts){
+    public static void printBoardWithValues(boolean[][] bombs, int[][] bombCounts, boolean[][] revealed){
         // print game
         for (int i = 1; i <= dimensionM; i++) {
             for (int j = 1; j <= dimensionN; j++)
-                if (bombs[i][j]) System.out.print("* ");
-                else             System.out.print(bombCounts[i][j] + " ");
+                if (revealed[i][j]) {
+                    if (bombs[i][j]) System.out.print("* ");
+                    else System.out.print(bombCounts[i][j] + " ");
+                } else {
+                    System.out.print(". ");
+                }
             System.out.println();
         }
     }
